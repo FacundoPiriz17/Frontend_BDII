@@ -1,0 +1,107 @@
+@import "tailwindcss";
+@import "react-toastify/dist/ReactToastify.css";
+
+/*
+  Design system "UCU Mundial":
+  - Primario: UCU (#00173a / #002b61)
+  - Acento "energy": (#00e3fd)
+  - Verde / ámbar / rojo: RESERVADOS para estado del sistema (disponibilidad, estados de compra/entrada, resultado de validación)
+*/
+@theme {
+  --font-sans: "Hanken Grotesk", ui-sans-serif, system-ui, -apple-system, sans-serif;
+
+  --color-navy-950: #00173a;
+  --color-navy-900: #002b61;
+  --color-navy-800: #0b3c7e;
+  --color-navy-700: #25467d;
+  --color-navy-300: #7694d0;
+  --color-navy-200: #acc7ff;
+  --color-navy-100: #d7e2ff;
+
+  --color-energy-500: #00e3fd;
+  --color-energy-400: #4deeff;
+  --color-energy-700: #00616d;
+
+  --color-surface: #f9f9ff;
+  --color-surface-dim: #d2daeb;
+  --color-container-low: #f0f3ff;
+  --color-container: #e7eeff;
+  --color-container-high: #dbe3f4;
+
+
+  --color-ink: #141c28;
+  --color-ink-soft: #434750;
+  --color-ink-faint: #747781;
+  --color-line: #c4c6d1;
+
+
+  --color-ok-600: #047857;
+  --color-ok-500: #10b981;
+  --color-ok-100: #d1fae5;
+  --color-warn-600: #b45309;
+  --color-warn-500: #f59e0b;
+  --color-warn-100: #fef3c7;
+  --color-danger-700: #93000a;
+  --color-danger-600: #ba1a1a;
+  --color-danger-500: #ef4444;
+  --color-danger-100: #ffdad6;
+  --color-info-600: #1d4ed8;
+  --color-info-500: #3b82f6;
+  --color-info-100: #dbeafe;
+
+  --shadow-trust: 0px 10px 30px rgba(0, 43, 97, 0.12);
+  --shadow-card: 0px 2px 8px rgba(20, 28, 40, 0.06);
+
+  --animate-pulse-soft: pulse-soft 2s ease-in-out infinite;
+
+  @keyframes pulse-soft {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.55; }
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-surface text-ink font-sans antialiased;
+}
+
+.display-tight {
+  letter-spacing: -0.02em;
+}
+
+
+.scroll-slim::-webkit-scrollbar { height: 6px; width: 6px; }
+.scroll-slim::-webkit-scrollbar-thumb { @apply bg-line rounded-full; }
+.scroll-slim::-webkit-scrollbar-track { background: transparent; }
+
+.scan-frame { position: relative; }
+.scan-frame::before,
+.scan-frame::after,
+.scan-frame > .corner::before,
+.scan-frame > .corner::after {
+  content: "";
+  position: absolute;
+  width: 34px;
+  height: 34px;
+  border: 3px solid var(--color-energy-500);
+  border-radius: 4px;
+}
+.scan-frame::before { top: -3px; left: -3px; border-right: none; border-bottom: none; }
+.scan-frame::after { top: -3px; right: -3px; border-left: none; border-bottom: none; }
+.scan-frame > .corner::before { bottom: -3px; left: -3px; border-right: none; border-top: none; }
+.scan-frame > .corner::after { bottom: -3px; right: -3px; border-left: none; border-top: none; }
+
+#qr-reader video {
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 500" role="img" aria-label="Mundial 2026 - estadio" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#002b61"/>
+      <stop offset="1" stop-color="#00173a"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.1" r="0.9">
+      <stop offset="0" stop-color="#00e3fd" stop-opacity="0.35"/>
+      <stop offset="1" stop-color="#00e3fd" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="pitch" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#06321e" stop-opacity="0.0"/>
+      <stop offset="1" stop-color="#06321e" stop-opacity="0.85"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1200" height="500" fill="url(#sky)"/>
+  <rect width="1200" height="500" fill="url(#glow)"/>
+
+  <!-- Luces de estadio -->
+  <g opacity="0.5" fill="#00e3fd">
+    <circle cx="180" cy="70" r="3"/><circle cx="240" cy="55" r="2"/><circle cx="300" cy="80" r="2.5"/>
+    <circle cx="900" cy="60" r="3"/><circle cx="960" cy="80" r="2"/><circle cx="1020" cy="55" r="2.5"/>
+  </g>
+
+  <!-- Tribunas (arcos) -->
+  <g fill="none" stroke="#0b3c7e" stroke-width="2" opacity="0.55">
+    <path d="M-50 250 Q600 90 1250 250"/>
+    <path d="M-50 280 Q600 130 1250 280"/>
+    <path d="M-50 310 Q600 170 1250 310"/>
+  </g>
+
+  <!-- Cancha -->
+  <path d="M0 300 H1200 V500 H0 Z" fill="url(#pitch)"/>
+  <g stroke="#00e3fd" stroke-width="2" fill="none" opacity="0.45">
+    <ellipse cx="600" cy="470" rx="240" ry="70"/>
+    <line x1="600" y1="300" x2="600" y2="500"/>
+    <path d="M360 500 a240 70 0 0 1 480 0"/>
+  </g>
+
+  <!-- Balón -->
+  <g transform="translate(600 250)">
+    <circle r="46" fill="#00e3fd"/>
+    <path d="M0 -34 l21 15.5 -8 25 H-13 l-8 -25 z" fill="#00173a"/>
+    <path d="M-36 6 l9 -6 12 8.5 -5.5 19 A46 46 0 0 1 -36 6z" fill="#00173a"/>
+    <path d="M36 6 A46 46 0 0 1 20.5 27.5 L15 8.5 27 0 z" fill="#00173a"/>
+  </g>
+
+  <!-- Confeti -->
+  <g fill="#4deeff" opacity="0.8">
+    <rect x="430" y="150" width="6" height="6" rx="1" transform="rotate(20 433 153)"/>
+    <rect x="780" y="120" width="6" height="6" rx="1" transform="rotate(-15 783 123)"/>
+    <rect x="700" y="200" width="5" height="5" rx="1" transform="rotate(35 702 202)"/>
+    <rect x="500" y="110" width="5" height="5" rx="1" transform="rotate(-25 502 112)"/>
+  </g>
+</svg>

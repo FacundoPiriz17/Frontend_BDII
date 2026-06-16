@@ -1,0 +1,112 @@
+import { useCallback, useMemo, useState } from "react";
+import { LuSearch, LuCalendarX, LuTicket } from "react-icons/lu";
+import { motion } from "framer-motion";
+import PageHeader from "../../../components/layout/PageHeader";
+import Input from "../../../components/ui/Input";
+import Select from "../../../components/ui/Select";
+import { LoadingBlock } from "../../../components/ui/Spinner";
+import EmptyState from "../../../components/ui/EmptyState";
+import ErrorMessage from "../../../components/feedback/ErrorMessage";
+import PartidoCard from "../components/PartidoCard";
+import { partidoService } from "../services/partidoService";
+import { useEquipos } from "../hooks/useEquipos";
+import { useFetch } from "../../../hooks/useFetch";
+import { useDebounce } from "../../../hooks/useDebounce";
+import { FASES, PAISES_SEDE } from "../../../lib/constants";
+import { useDocumentTitle } from "../../../hooks/useDocumentTitle";
+
+/**
+ * Cartelera de partidos comprables. Usa /api/compras/partidos-disponibles
+ * filtra del lado del cliente.
+ */
+export default function PartidosPage() {
+  useDocumentTitle("Partidos");
+  const { buscarEquipo } = useEquipos();
+  const { data, loading, error, refetch } = useFetch(
+    useCallback(() => partidoService.disponibles(), [])
+  );
+
+  const [busqueda, setBusqueda] = useState("");
+  const [fase, setFase] = useState("");
+  const [pais, setPais] = useState("");
+  const q = useDebounce(busqueda);
+
+  const partidos = useMemo(() => {
+    let list = data ?? [];
+    if (q) {
+      const k = q.toLowerCase();
+      list = list.filter(
+        (p) =>
+          p.equipoLocal?.toLowerCase().includes(k) ||
+          p.equipoVisitante?.toLowerCase().includes(k) ||
+          p.estadio?.nombre?.toLowerCase().includes(k) ||
+          p.estadio?.ciudad?.toLowerCase().includes(k)
+      );
+    }
+    if (fase) list = list.filter((p) => p.fase === fase);
+    if (pais) list = list.filter((p) => p.estadio?.pais === pais);
+    return [...list].sort((a, b) => `${a.fecha}${a.hora}`.localeCompare(`${b.fecha}${b.hora}`));
+  }, [data, q, fase, pais]);
+
+  return (
+    <>
+      <motion.section
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="relative mb-8 overflow-hidden rounded-3xl bg-navy-950 px-6 py-10 text-white sm:px-10"
+      >
+        <div aria-hidden className="pointer-events-none absolute inset-0">
+          <div className="absolute -right-20 -top-24 size-80 rounded-full bg-navy-800/70 blur-3xl" />
+          <div className="absolute -bottom-28 left-1/3 size-80 rounded-full bg-energy-700/40 blur-3xl" />
+        </div>
+        <div className="relative">
+          <p className="mb-2 inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-[11px] font-bold uppercase tracking-widest text-energy-400">
+            <LuTicket className="size-3.5" aria-hidden /> FIFA World Cup 2026
+          </p>
+          <h1 className="max-w-2xl text-3xl font-extrabold leading-tight display-tight sm:text-4xl">
+            Tu lugar en <span className="text-energy-500">la historia</span> del fútbol
+          </h1>
+          <p className="mt-2 max-w-xl text-sm text-navy-100 sm:text-base">
+            Entradas oficiales con QR dinámico para los partidos en México, EEUU y Canadá.
+            Máximo 5 entradas por compra.
+          </p>
+        </div>
+      </motion.section>
+
+      <PageHeader
+        title="Próximos partidos"
+        subtitle="Elegí un partido para ver sus sectores y disponibilidad en tiempo real."
+      />
+
+      <div className="mb-6 grid gap-3 sm:grid-cols-[2fr_1fr_1fr]">
+        <Input
+          icon={LuSearch}
+          label="Buscar"
+          placeholder="Equipo, estadio o ciudad…"
+          value={busqueda}
+          onChange={(e) => setBusqueda(e.target.value)}
+        />
+        <Select label="Fase" placeholder="Todas las fases" options={FASES} value={fase} onChange={(e) => setFase(e.target.value)} />
+        <Select label="País sede" placeholder="Todos los países" options={PAISES_SEDE} value={pais} onChange={(e) => setPais(e.target.value)} />
+      </div>
+
+      {loading ? (
+        <LoadingBlock label="Buscando partidos…" />
+      ) : error ? (
+        <ErrorMessage error={error} onRetry={refetch} />
+      ) : partidos.length === 0 ? (
+        <EmptyState
+          icon={LuCalendarX}
+          title="No hay partidos para mostrar"
+          description="Probá quitando filtros, o volvé más tarde: los eventos se habilitan a la venta hasta un día antes del partido."
+        />
+      ) : (
+        <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+          {partidos.map((p) => (
+            <PartidoCard key={p.idPartido} partido={p} buscarEquipo={buscarEquipo} />
+          ))}
+        </div>
+      )}
+    </>
+  );
+}

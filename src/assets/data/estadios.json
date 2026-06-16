@@ -1,0 +1,66 @@
+[
+  {
+    "nombre_estadio": "MetLife Stadium",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/0/04/Metlife_stadium_%28Aerial_view%29.jpg"
+  },
+  {
+    "nombre_estadio": "SoFi Stadium",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/b/b3/SoFi_Stadium_2023.jpg"
+  },
+  {
+    "nombre_estadio": "AT&T Stadium",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/1/11/Arlington_June_2020_4_%28AT%26T_Stadium%29.jpg"
+  },
+  {
+    "nombre_estadio": "Mercedes-Benz Stadium",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/1/10/Mercedes_Benz_Stadium_time_lapse_capture_2017-08-13.jpg"
+  },
+  {
+    "nombre_estadio": "NRG Stadium",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/3/3e/Nrg_stadium.jpg"
+  },
+  {
+    "nombre_estadio": "Arrowhead Stadium",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/a/ac/Aerial_view_of_Arrowhead_Stadium_08-31-2013.jpg"
+  },
+  {
+    "nombre_estadio": "Lincoln Financial Field",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/a/a1/Lincoln_Financial_Field_%28Aerial_view%29.jpg"
+  },
+  {
+    "nombre_estadio": "Lumen Field",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/9/98/2025_FIFA_Club_World_Cup_-_Seattle_Sounders_FC_vs._Atl%C3%A9tico_Madrid_-_05.jpg"
+  },
+  {
+    "nombre_estadio": "Levis Stadium",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/a/a6/Levi%27s_Stadium_in_February_2016_prior_to_Super_Bowl_50_%2824398261729%29.jpg"
+  },
+  {
+    "nombre_estadio": "Hard Rock Stadium",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/c/ce/Hard_Rock_Stadium_for_Super_Bowl_LIV_%2849606710103%29.jpg"
+  },
+  {
+    "nombre_estadio": "Gillette Stadium",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/d/db/Gillette_Stadium_%28Top_View%29.jpg"
+  },
+  {
+    "nombre_estadio": "BC Place",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/f/ff/BC_Place_2015_Women%27s_FIFA_World_Cup.jpg"
+  },
+  {
+    "nombre_estadio": "BMO Field",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/9/91/Toronto_BMO_Field_in_2024.jpg"
+  },
+  {
+    "nombre_estadio": "Estadio Azteca",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/0/07/Vista_a%C3%A9rea_del_Estadio_Azteca_-_2026_-_02.jpg"
+  },
+  {
+    "nombre_estadio": "Estadio Akron",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/1/10/Estadio_Akron_02-07-2022_cabecera_sur_lado_derecho_%283%29.jpg"
+  },
+  {
+    "nombre_estadio": "Estadio BBVA",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/5/57/Mexico_Guadalupe_Monterrey_Estadio_BBVA_Bancomer_fifa_world_cup_2026_6.JPG"
+  }
+]
