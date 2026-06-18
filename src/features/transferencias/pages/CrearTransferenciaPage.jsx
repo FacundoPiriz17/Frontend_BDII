@@ -4,9 +4,10 @@ import { toast } from "react-toastify";
 import { LuArrowLeft, LuArrowLeftRight, LuTriangleAlert } from "react-icons/lu";
 import PageHeader from "../../../components/layout/PageHeader";
 import Card, { CardBody, CardHeader } from "../../../components/ui/Card";
-import Select from "../../../components/ui/Select";
+import Modal from "../../../components/ui/Modal";
 import Input from "../../../components/ui/Input";
 import Button from "../../../components/ui/Button";
+import Flag from "../../../components/ui/Flag";
 import { LoadingBlock } from "../../../components/ui/Spinner";
 import ConfirmDialog from "../../../components/feedback/ConfirmDialog";
 import { entradaService } from "../../entradas/services/entradaService";
@@ -14,8 +15,9 @@ import { transferenciaService } from "../services/transferenciaService";
 import { useFetch } from "../../../hooks/useFetch";
 import { useAuth } from "../../auth/hooks/useAuth";
 import { esEmailUcu } from "../../../lib/validators";
-import { formatPartido, formatFecha } from "../../../lib/formatters";
+import { formatFecha } from "../../../lib/formatters";
 import { MAX_TRANSFERENCIAS } from "../../../lib/constants";
+import { cn } from "../../../lib/cn";
 import { routePaths } from "../../../routes/routePaths";
 import { useDocumentTitle } from "../../../hooks/useDocumentTitle";
 
@@ -40,6 +42,7 @@ export default function CrearTransferenciaPage() {
   const [errorEmail, setErrorEmail] = useState(null);
   const [confirmando, setConfirmando] = useState(false);
   const [enviando, setEnviando] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
     if (preseleccion) setIdEntrada(preseleccion);
@@ -103,28 +106,39 @@ export default function CrearTransferenciaPage() {
               </div>
             ) : (
               <form onSubmit={abrirConfirmacion} className="space-y-5" noValidate>
-                <Select
-                  label="Entrada a transferir"
-                  placeholder="Elegí una entrada…"
-                  value={idEntrada}
-                  onChange={(e) => setIdEntrada(e.target.value)}
-                  options={transferibles.map((e) => ({
-                    value: e.idEntrada,
-                    label: `#${e.idEntrada} · ${formatPartido(e.partido)} · Sector ${e.nombreSector}`,
-                  }))}
-                />
-
-                {entradaSel && (
-                  <div className="rounded-xl bg-container-low p-4 text-sm">
-                    <p className="font-bold text-ink">{formatPartido(entradaSel.partido)}</p>
-                    <p className="text-ink-soft">
-                      {formatFecha(entradaSel.partido?.fecha)} · {entradaSel.partido?.estadio?.nombre} · Sector {entradaSel.nombreSector}
-                    </p>
-                    <p className="mt-1 text-xs font-semibold text-navy-900">
+                <div>
+                  <p className="mb-1.5 text-sm font-semibold text-ink">Entrada a transferir</p>
+                  {entradaSel ? (
+                    <button
+                      type="button"
+                      onClick={() => setModalOpen(true)}
+                      className="flex w-full items-center gap-3 rounded-xl border border-navy-700 bg-white p-3 text-left ring-1 ring-navy-700/20 transition-colors hover:bg-container-low"
+                    >
+                      <span className="flex items-center -space-x-1.5">
+                        <Flag codigo={entradaSel.partido?.equipoLocal} size="sm" />
+                        <Flag codigo={entradaSel.partido?.equipoVisitante} size="sm" />
+                      </span>
+                      <span className="min-w-0 flex-1">
+                        <span className="block truncate text-sm font-bold text-ink">
+                          {entradaSel.partido?.equipoLocal} vs {entradaSel.partido?.equipoVisitante}
+                        </span>
+                        <span className="block text-xs text-ink-soft">
+                          #{entradaSel.idEntrada} · Sector {entradaSel.nombreSector} · {formatFecha(entradaSel.partido?.fecha)}
+                        </span>
+                      </span>
+                      <span className="text-xs font-bold text-navy-900">Cambiar</span>
+                    </button>
+                  ) : (
+                    <Button type="button" variant="outline" className="w-full" onClick={() => setModalOpen(true)}>
+                      Elegí una entrada…
+                    </Button>
+                  )}
+                  {entradaSel && (
+                    <p className="mt-1.5 text-xs font-semibold text-navy-900">
                       Transferencias restantes: {entradaSel.transferenciasRestantes}/{MAX_TRANSFERENCIAS}
                     </p>
-                  </div>
-                )}
+                  )}
+                </div>
 
                 <Input
                   label="Email de destino"
@@ -144,6 +158,43 @@ export default function CrearTransferenciaPage() {
           </CardBody>
         </Card>
       </div>
+
+      {modalOpen && (
+        <Modal open onClose={() => setModalOpen(false)} title="Elegí una entrada" size="lg">
+          <div className="grid gap-3 sm:grid-cols-2">
+            {transferibles.map((e) => {
+              const seleccionada = String(e.idEntrada) === String(idEntrada);
+              return (
+                <button
+                  key={e.idEntrada}
+                  type="button"
+                  onClick={() => { setIdEntrada(String(e.idEntrada)); setModalOpen(false); }}
+                  className={cn(
+                    "flex flex-col gap-2 rounded-2xl border p-4 text-left transition-all",
+                    seleccionada
+                      ? "border-navy-700 ring-2 ring-navy-700/20"
+                      : "border-container-high hover:border-navy-300 hover:shadow-(--shadow-card)"
+                  )}
+                >
+                  <div className="flex items-center gap-2">
+                    <Flag codigo={e.partido?.equipoLocal} nombre={e.partido?.equipoLocal} size="sm" />
+                    <span className="text-sm font-extrabold text-ink">{e.partido?.equipoLocal}</span>
+                    <span className="text-xs text-ink-faint">vs</span>
+                    <Flag codigo={e.partido?.equipoVisitante} nombre={e.partido?.equipoVisitante} size="sm" />
+                    <span className="text-sm font-extrabold text-ink">{e.partido?.equipoVisitante}</span>
+                  </div>
+                  <p className="text-xs text-ink-soft">
+                    #{e.idEntrada} · Sector {e.nombreSector} · {formatFecha(e.partido?.fecha)}
+                  </p>
+                  <p className="text-[11px] font-semibold text-navy-900">
+                    {e.transferenciasRestantes}/{MAX_TRANSFERENCIAS} transferencias restantes
+                  </p>
+                </button>
+              );
+            })}
+          </div>
+        </Modal>
+      )}
 
       <ConfirmDialog
         open={confirmando}

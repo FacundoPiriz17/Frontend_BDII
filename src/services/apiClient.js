@@ -2,7 +2,7 @@ import { storage, TOKEN_KEY } from "../lib/storage";
 
 const BASE_URL = import.meta.env.VITE_API_URL || "";
 
-/** Error de API con la forma de ProblemDetails (RFC 7807) que emite .NET */
+/** Error de API con la forma de ProblemDetails que emite .NET */
 export class ApiError extends Error {
   constructor({ status, title, detail, problem }) {
     super(detail || title || `Error ${status}`);

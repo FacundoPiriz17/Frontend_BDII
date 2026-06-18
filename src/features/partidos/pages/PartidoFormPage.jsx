@@ -66,6 +66,11 @@ export default function PartidoFormPage() {
   const estadioElegido = (estadios ?? []).find((e) => String(e.idEstadio) === String(form.idEstadio));
   const sectoresDelEstadio = estadioElegido?.sectores?.map((s) => s.nombreSector) ?? SECTORES;
 
+  // Reglas de edición por estado: empezado => solo marcador; terminado => nada.
+  const soloMarcador = esEdicion && form.estado === "empezado";
+  const terminado = esEdicion && form.estado === "terminado";
+  const bloquearCampos = soloMarcador || terminado;
+
   const toggleSector = (nombre) =>
     setForm((f) => ({
       ...f,
@@ -148,18 +153,29 @@ export default function PartidoFormPage() {
         subtitle={esEdicion ? `Evento #${idPartido}` : "Como admin, solo podés crear eventos en estadios de tu país sede."}
       />
 
+      {(soloMarcador || terminado) && (
+        <div className={cn(
+          "mb-6 rounded-xl border px-4 py-3 text-sm font-semibold",
+          terminado ? "border-container-high bg-container-low text-ink-soft" : "border-warn-500/40 bg-warn-100 text-warn-600"
+        )}>
+          {terminado
+            ? "Este partido ya terminó: no se puede editar."
+            : "El partido está en juego: solo podés modificar el marcador."}
+        </div>
+      )}
+
       <form onSubmit={onSubmit} className="grid gap-6 lg:grid-cols-[7fr_5fr]" noValidate>
         <div className="space-y-6">
           <Card>
             <CardHeader title="Cruce" />
             <CardBody className="grid gap-4 sm:grid-cols-2">
               <Select label="Equipo local" placeholder="Elegir equipo…" options={opcionesEquipos}
-                value={form.equipoLocal} onChange={set("equipoLocal")} error={errores.equipoLocal} />
+                value={form.equipoLocal} onChange={set("equipoLocal")} error={errores.equipoLocal} disabled={bloquearCampos} />
               <Select label="Equipo visitante" placeholder="Elegir equipo…" options={opcionesEquipos}
-                value={form.equipoVisitante} onChange={set("equipoVisitante")} error={errores.equipoVisitante} />
-              <Select label="Fase" options={FASES} value={form.fase} onChange={set("fase")} />
+                value={form.equipoVisitante} onChange={set("equipoVisitante")} error={errores.equipoVisitante} disabled={bloquearCampos} />
+              <Select label="Fase" options={FASES} value={form.fase} onChange={set("fase")} disabled={bloquearCampos} />
               <Input label="Costo base del evento (USD)" type="number" min="0"
-                value={form.costo} onChange={set("costo")} error={errores.costo}
+                value={form.costo} onChange={set("costo")} error={errores.costo} disabled={bloquearCampos}
                 hint="Se suma al costo del sector para formar el precio final." />
             </CardBody>
           </Card>
@@ -169,11 +185,11 @@ export default function PartidoFormPage() {
             <CardBody className="grid gap-4 sm:grid-cols-2">
               <Select className="sm:col-span-2" label="Estadio" placeholder="Elegir estadio…"
                 options={(estadios ?? []).map((e) => ({ value: e.idEstadio, label: `${e.nombre} · ${e.ciudad}, ${e.pais}` }))}
-                value={form.idEstadio} onChange={set("idEstadio")} error={errores.idEstadio} />
-              <Input label="Fecha del partido" type="date" value={form.fecha} onChange={set("fecha")} error={errores.fecha} />
-              <Input label="Hora" type="time" value={form.hora} onChange={set("hora")} error={errores.hora} />
+                value={form.idEstadio} onChange={set("idEstadio")} error={errores.idEstadio} disabled={bloquearCampos} />
+              <Input label="Fecha del partido" type="date" value={form.fecha} onChange={set("fecha")} error={errores.fecha} disabled={bloquearCampos} />
+              <Input label="Hora" type="time" value={form.hora} onChange={set("hora")} error={errores.hora} disabled={bloquearCampos} />
               <Input className="sm:col-span-2" label="Fecha de habilitación de venta" type="date"
-                value={form.fechaHabilitacion} onChange={set("fechaHabilitacion")} error={errores.fechaHabilitacion}
+                value={form.fechaHabilitacion} onChange={set("fechaHabilitacion")} error={errores.fechaHabilitacion} disabled={bloquearCampos}
                 hint="La venta abre en esta fecha y debe cerrar al menos 1 día antes del partido." />
             </CardBody>
           </Card>
@@ -182,11 +198,11 @@ export default function PartidoFormPage() {
             <Card>
               <CardHeader title="Estado del partido" subtitle="Resultado y ciclo de vida del evento." />
               <CardBody className="grid gap-4 sm:grid-cols-3">
-                <Select label="Estado" options={ESTADOS_PARTIDO} value={form.estado} onChange={set("estado")} />
+                <Select label="Estado" options={ESTADOS_PARTIDO} value={form.estado} onChange={set("estado")} disabled={terminado} />
                 <Input label={`Goles ${form.equipoLocal || "local"}`} type="number" min="0"
-                  value={form.marcadorLocal} onChange={set("marcadorLocal")} />
+                  value={form.marcadorLocal} onChange={set("marcadorLocal")} disabled={terminado} />
                 <Input label={`Goles ${form.equipoVisitante || "visitante"}`} type="number" min="0"
-                  value={form.marcadorVisitante} onChange={set("marcadorVisitante")} />
+                  value={form.marcadorVisitante} onChange={set("marcadorVisitante")} disabled={terminado} />
               </CardBody>
             </Card>
           )}
@@ -203,9 +219,11 @@ export default function PartidoFormPage() {
                     <button
                       key={s}
                       type="button"
+                      disabled={bloquearCampos}
                       onClick={() => toggleSector(s)}
                       aria-pressed={activo}
                       className={cn(
+                        bloquearCampos && "cursor-not-allowed opacity-60",
                         "flex items-center justify-between rounded-xl border-2 px-4 py-3 font-extrabold transition-colors",
                         activo
                           ? "border-navy-900 bg-navy-900 text-white"
@@ -221,7 +239,7 @@ export default function PartidoFormPage() {
                 })}
               </div>
               {errores.sectores && <p className="mt-2 text-xs font-medium text-danger-600">{errores.sectores}</p>}
-              <Button type="submit" size="lg" loading={guardando} className="mt-6 w-full">
+              <Button type="submit" size="lg" loading={guardando} disabled={terminado} className="mt-6 w-full">
                 {esEdicion ? "Guardar cambios" : "Crear evento"}
               </Button>
             </CardBody>

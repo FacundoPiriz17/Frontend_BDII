@@ -1,5 +1,4 @@
-/* Mapa 1:1 con swagger_backend_bdii.json.
-   Si hay cambios en los endpoints cambiar acá */
+/* Si hay cambios en los endpoints cambiar acá */
 
 export const endpoints = {
   auth: {
@@ -7,6 +6,7 @@ export const endpoints = {
     register: "/api/auth/register",
     me: "/api/auth/me",
     refresh: "/api/auth/refresh",
+    cambiarContrasena: "/api/auth/cambiar-contrasena",
   },
   home: {
     general: "/api/home/general",
@@ -69,5 +69,6 @@ export const endpoints = {
     mayoresCompradores: "/api/reportes/mayores-compradores",
     ocupacionEventos: "/api/reportes/ocupacion-eventos",
     resumenValidaciones: "/api/reportes/validaciones/resumen",
+    auditoria: "/api/reportes/auditoria",
   },
 };

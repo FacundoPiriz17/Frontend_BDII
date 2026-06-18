@@ -9,6 +9,7 @@ import Select from "../../../components/ui/Select";
 import Button from "../../../components/ui/Button";
 import { LoadingBlock } from "../../../components/ui/Spinner";
 import ErrorMessage from "../../../components/feedback/ErrorMessage";
+import EstadioImagen from "../components/EstadioImagen";
 import { estadioService } from "../services/estadioService";
 import { useFetch } from "../../../hooks/useFetch";
 import { PAISES_SEDE, SECTORES } from "../../../lib/constants";
@@ -55,6 +56,13 @@ export default function EstadioFormPage() {
       }),
     });
   }, [original]);
+
+  // Resumen de cupos: suma de capacidades de sectores incluidos vs capacidad total.
+  const capacidadTotal = Number(form.capacidad) || 0;
+  const sumaSectores = form.sectores
+    .filter((s) => s.incluido)
+    .reduce((acc, s) => acc + (Number(s.capacidad) || 0), 0);
+  const diferencia = capacidadTotal - sumaSectores; // >0 faltan, <0 se pasa
 
   const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
   const setSector = (idx, campo, valor) =>
@@ -133,6 +141,9 @@ export default function EstadioFormPage() {
         <Card>
           <CardHeader title="Datos del estadio" />
           <CardBody className="grid gap-4 sm:grid-cols-2">
+            <div className="overflow-hidden rounded-xl border border-container-high sm:col-span-2">
+              <EstadioImagen nombre={form.nombre} className="h-40 w-full" />
+            </div>
             <Input className="sm:col-span-2" label="Nombre" value={form.nombre} onChange={set("nombre")} error={errores.nombre} placeholder="MetLife Stadium" />
             <Input label="Ciudad" value={form.ciudad} onChange={set("ciudad")} error={errores.ciudad} placeholder="East Rutherford" />
             <Select label="País sede" options={PAISES_SEDE} value={form.pais} onChange={set("pais")} />
@@ -163,6 +174,30 @@ export default function EstadioFormPage() {
               ))}
             </div>
             {errores.sectores && <p className="mt-2 text-xs font-medium text-danger-600">{errores.sectores}</p>}
+
+            {capacidadTotal > 0 && (
+              <div className={cn(
+                "mt-4 rounded-xl border px-3 py-2.5 text-sm",
+                diferencia < 0
+                  ? "border-danger-500/40 bg-danger-100/50 text-danger-700"
+                  : diferencia === 0
+                    ? "border-ok-500/40 bg-ok-100/60 text-ok-600"
+                    : "border-container-high bg-container-low text-ink-soft"
+              )}>
+                <div className="flex items-center justify-between font-semibold">
+                  <span>Sectores: {sumaSectores.toLocaleString("es-UY")}</span>
+                  <span>Capacidad: {capacidadTotal.toLocaleString("es-UY")}</span>
+                </div>
+                <p className="mt-1 text-xs font-bold">
+                  {diferencia < 0
+                    ? `Te pasás por ${Math.abs(diferencia).toLocaleString("es-UY")} lugares.`
+                    : diferencia === 0
+                      ? "Los sectores cubren exactamente la capacidad."
+                      : `Faltan ${diferencia.toLocaleString("es-UY")} lugares para cubrir la capacidad.`}
+                </p>
+              </div>
+            )}
+
             <Button type="submit" size="lg" loading={guardando} className="mt-5 w-full">
               {esEdicion ? "Guardar cambios" : "Crear estadio"}
             </Button>

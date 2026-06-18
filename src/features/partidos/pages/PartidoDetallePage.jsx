@@ -9,6 +9,7 @@ import { LoadingBlock } from "../../../components/ui/Spinner";
 import ErrorMessage from "../../../components/feedback/ErrorMessage";
 import TeamBadge from "../components/TeamBadge";
 import SectoresDisponibles from "../components/SectoresDisponibles";
+import EstadioImagen from "../../estadios/components/EstadioImagen";
 import { partidoService } from "../services/partidoService";
 import { useEquipos } from "../hooks/useEquipos";
 import { useFetch } from "../../../hooks/useFetch";
@@ -82,7 +83,17 @@ export default function PartidoDetallePage() {
       </section>
 
       <div className="grid gap-6 lg:grid-cols-[7fr_5fr]">
-        <Card>
+        <Card className="overflow-hidden">
+          <div className="relative">
+            <EstadioImagen nombre={partido.estadio?.nombre} src={partido.estadio?.imagenUrl} className="h-48 w-full sm:h-56" />
+            <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-navy-950/80 to-transparent p-4">
+              <p className="flex items-center gap-1.5 text-sm font-bold text-white">
+                <LuMapPin className="size-4 text-energy-400" aria-hidden />
+                {partido.estadio?.nombre}
+              </p>
+              <p className="text-xs text-navy-100">{partido.estadio?.ciudad}, {partido.estadio?.pais}</p>
+            </div>
+          </div>
           <CardHeader
             title="Sectores y disponibilidad"
             subtitle="El precio incluye el costo base del evento más el costo del sector."

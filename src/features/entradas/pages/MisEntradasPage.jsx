@@ -44,7 +44,10 @@ export default function MisEntradasPage() {
       <div className="mb-6 grid gap-3 sm:grid-cols-[2fr_1fr]">
         <Input icon={LuSearch} label="Buscar" placeholder="Equipo o estadio…"
           value={busqueda} onChange={(e) => setBusqueda(e.target.value)} />
-        <Select label="Estado" placeholder="Todos" options={ESTADOS_ENTRADA}
+        <Select label="Estado" placeholder="Todas" options={[
+          { value: "activa", label: "Activas" },
+          { value: "consumida", label: "Consumidas" },
+        ]}
           value={estado} onChange={(e) => setEstado(e.target.value)} />
       </div>
 

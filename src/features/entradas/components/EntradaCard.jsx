@@ -2,7 +2,8 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { LuQrCode, LuArrowLeftRight, LuMapPin } from "react-icons/lu";
 import Badge from "../../../components/ui/Badge";
-import { formatFecha, formatHora, formatPartido } from "../../../lib/formatters";
+import Flag from "../../../components/ui/Flag";
+import { formatFecha, formatHora } from "../../../lib/formatters";
 import { MAX_TRANSFERENCIAS } from "../../../lib/constants";
 import { routePaths } from "../../../routes/routePaths";
 
@@ -25,7 +26,13 @@ export default function EntradaCard({ entrada }) {
         <div className="min-w-0 flex-1 p-4">
           <div className="flex items-start justify-between gap-2">
             <div className="min-w-0">
-              <p className="truncate font-extrabold text-ink">{formatPartido(p)}</p>
+              <p className="flex items-center gap-1.5 truncate font-extrabold text-ink">
+                <Flag codigo={p?.equipoLocal} nombre={p?.equipoLocal} size="xs" />
+                {p?.equipoLocal ?? "?"}
+                <span className="text-ink-faint">vs</span>
+                <Flag codigo={p?.equipoVisitante} nombre={p?.equipoVisitante} size="xs" />
+                {p?.equipoVisitante ?? "?"}
+              </p>
               <p className="text-xs text-ink-soft">
                 {formatFecha(p?.fecha)} · {formatHora(p?.hora)} h
               </p>

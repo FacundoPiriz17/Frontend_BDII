@@ -9,6 +9,7 @@ import Badge from "../../../components/ui/Badge";
 import EmptyState from "../../../components/ui/EmptyState";
 import { LoadingBlock } from "../../../components/ui/Spinner";
 import ErrorMessage from "../../../components/feedback/ErrorMessage";
+import EstadioImagen from "../components/EstadioImagen";
 import { estadioService } from "../services/estadioService";
 import { useFetch } from "../../../hooks/useFetch";
 import { PAISES_SEDE } from "../../../lib/constants";
@@ -50,16 +51,19 @@ export default function EstadiosPage() {
       ) : (
         <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
           {data.map((e) => (
-            <Card key={e.idEstadio}>
+            <Card key={e.idEstadio} className="overflow-hidden">
+              <div className="relative">
+                <EstadioImagen nombre={e.nombre} src={e.imagenUrl} className="h-40 w-full" />
+                <span className="absolute right-3 top-3 rounded-full bg-navy-950/85 px-2.5 py-0.5 text-xs font-bold text-white backdrop-blur">
+                  {e.capacidad?.toLocaleString("es-UY") ?? "—"} lugares
+                </span>
+              </div>
               <CardBody>
-                <div className="flex items-start justify-between gap-2">
-                  <div className="min-w-0">
-                    <h3 className="truncate text-lg font-bold text-ink display-tight">{e.nombre}</h3>
-                    <p className="flex items-center gap-1 text-sm text-ink-soft">
-                      <LuMapPin className="size-3.5 text-ink-faint" /> {e.ciudad}, {e.pais}
-                    </p>
-                  </div>
-                  <Badge variant="navy">{e.capacidad?.toLocaleString("es-UY") ?? "—"}</Badge>
+                <div className="min-w-0">
+                  <h3 className="truncate text-lg font-bold text-ink display-tight">{e.nombre}</h3>
+                  <p className="flex items-center gap-1 text-sm text-ink-soft">
+                    <LuMapPin className="size-3.5 text-ink-faint" /> {e.ciudad}, {e.pais}
+                  </p>
                 </div>
 
                 <div className="mt-4 grid grid-cols-2 gap-2">

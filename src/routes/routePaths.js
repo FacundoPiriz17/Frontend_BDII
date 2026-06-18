@@ -34,4 +34,5 @@ export const routePaths = {
   adminUsuarios: "/admin/usuarios",
   adminDispositivos: "/admin/dispositivos",
   adminValidaciones: "/admin/validaciones",
+  adminAuditoria: "/admin/auditoria",
 };

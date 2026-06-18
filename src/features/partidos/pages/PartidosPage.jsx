@@ -12,7 +12,7 @@ import { partidoService } from "../services/partidoService";
 import { useEquipos } from "../hooks/useEquipos";
 import { useFetch } from "../../../hooks/useFetch";
 import { useDebounce } from "../../../hooks/useDebounce";
-import { FASES, PAISES_SEDE } from "../../../lib/constants";
+import { FASES, PAISES_SEDE, ESTADOS_PARTIDO } from "../../../lib/constants";
 import { useDocumentTitle } from "../../../hooks/useDocumentTitle";
 
 /**
@@ -22,23 +22,33 @@ import { useDocumentTitle } from "../../../hooks/useDocumentTitle";
 export default function PartidosPage() {
   useDocumentTitle("Partidos");
   const { buscarEquipo } = useEquipos();
-  const { data, loading, error, refetch } = useFetch(
-    useCallback(() => partidoService.disponibles(), [])
-  );
-
   const [busqueda, setBusqueda] = useState("");
   const [fase, setFase] = useState("");
   const [pais, setPais] = useState("");
+  const [estado, setEstado] = useState("");
   const q = useDebounce(busqueda);
+
+  // Sin filtro de estado => cartelera comprable (partidos-disponibles, próximos).
+  // Con estado => todos los partidos de ese estado (incluye terminados con resultado).
+  const { data, loading, error, refetch } = useFetch(
+    useCallback(
+      () => (estado ? partidoService.listar({ estado, soloFuturos: false }) : partidoService.disponibles()),
+      [estado]
+    )
+  );
 
   const partidos = useMemo(() => {
     let list = data ?? [];
     if (q) {
       const k = q.toLowerCase();
+      // Buscamos por código FIFA, nombre de la selección (resuelto), estadio y ciudad.
+      const nombre = (code) => buscarEquipo(code)?.nombre?.toLowerCase() ?? "";
       list = list.filter(
         (p) =>
           p.equipoLocal?.toLowerCase().includes(k) ||
           p.equipoVisitante?.toLowerCase().includes(k) ||
+          nombre(p.equipoLocal).includes(k) ||
+          nombre(p.equipoVisitante).includes(k) ||
           p.estadio?.nombre?.toLowerCase().includes(k) ||
           p.estadio?.ciudad?.toLowerCase().includes(k)
       );
@@ -46,7 +56,7 @@ export default function PartidosPage() {
     if (fase) list = list.filter((p) => p.fase === fase);
     if (pais) list = list.filter((p) => p.estadio?.pais === pais);
     return [...list].sort((a, b) => `${a.fecha}${a.hora}`.localeCompare(`${b.fecha}${b.hora}`));
-  }, [data, q, fase, pais]);
+  }, [data, q, fase, pais, buscarEquipo]);
 
   return (
     <>
@@ -78,7 +88,7 @@ export default function PartidosPage() {
         subtitle="Elegí un partido para ver sus sectores y disponibilidad en tiempo real."
       />
 
-      <div className="mb-6 grid gap-3 sm:grid-cols-[2fr_1fr_1fr]">
+      <div className="mb-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-[2fr_1fr_1fr_1fr]">
         <Input
           icon={LuSearch}
           label="Buscar"
@@ -88,6 +98,7 @@ export default function PartidosPage() {
         />
         <Select label="Fase" placeholder="Todas las fases" options={FASES} value={fase} onChange={(e) => setFase(e.target.value)} />
         <Select label="País sede" placeholder="Todos los países" options={PAISES_SEDE} value={pais} onChange={(e) => setPais(e.target.value)} />
+        <Select label="Estado" placeholder="Próximos (en venta)" options={ESTADOS_PARTIDO} value={estado} onChange={(e) => setEstado(e.target.value)} />
       </div>
 
       {loading ? (
@@ -103,7 +114,8 @@ export default function PartidosPage() {
       ) : (
         <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
           {partidos.map((p) => (
-            <PartidoCard key={p.idPartido} partido={p} buscarEquipo={buscarEquipo} />
+            <PartidoCard key={p.idPartido} partido={p} buscarEquipo={buscarEquipo}
+              comprable={!estado || estado === "no empezado"} />
           ))}
         </div>
       )}

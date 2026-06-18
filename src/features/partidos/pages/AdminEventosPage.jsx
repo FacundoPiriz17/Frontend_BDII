@@ -77,9 +77,15 @@ export default function AdminEventosPage() {
             <LuCircleStop className="size-4" /> Finalizar
           </Button>
         )}
-        <Link to={routePaths.adminEventoEditar(p.idPartido)}>
-          <Button size="sm" variant="outline"><LuPencil className="size-4" /> Editar</Button>
-        </Link>
+        {p.estado === "terminado" ? (
+          <Button size="sm" variant="outline" disabled title="Un partido terminado no se puede editar">
+            <LuPencil className="size-4" /> Editar
+          </Button>
+        ) : (
+          <Link to={routePaths.adminEventoEditar(p.idPartido)}>
+            <Button size="sm" variant="outline"><LuPencil className="size-4" /> Editar</Button>
+          </Link>
+        )}
       </div>
     )},
   ];

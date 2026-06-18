@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, Navigate, useParams } from "react-router-dom";
 import {
   LuArrowLeft, LuArrowLeftRight, LuCircleCheck, LuCircleX,
   LuTicketCheck, LuUserRound, LuHistory,
@@ -43,8 +43,15 @@ export default function EntradaDetallePage() {
   );
 
   if (loading) return <LoadingBlock label="Cargando entrada…" />;
-  if (error) return <ErrorMessage error={error} onRetry={refetch} />;
-  if (!entrada) return null;
+  // Seguridad: si la entrada no existe o no es del usuario (404/403), no
+  // mostramos nada de ella; lo devolvemos a su listado de entradas.
+  if (error) {
+    if (error.status === 404 || error.status === 403) {
+      return <Navigate to={routePaths.misEntradas} replace />;
+    }
+    return <ErrorMessage error={error} onRetry={refetch} />;
+  }
+  if (!entrada) return <Navigate to={routePaths.misEntradas} replace />;
 
   const esPropietario = entrada.emailPropietarioActual?.toLowerCase() === user?.email?.toLowerCase();
   const puedeTransferir = esPropietario && entrada.estado === "activa" && entrada.transferenciasRestantes > 0;

@@ -14,4 +14,7 @@ export const authService = {
 
 
   refresh: () => apiClient.post(endpoints.auth.refresh),
+
+  cambiarContrasena: (contrasenaActual, contrasenaNueva) =>
+    apiClient.post(endpoints.auth.cambiarContrasena, { contrasenaActual, contrasenaNueva }),
 };

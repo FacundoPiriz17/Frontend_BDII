@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import { AnimatePresence, motion } from "framer-motion";
 import { LuPlus, LuX, LuArrowLeft, LuArrowRight } from "react-icons/lu";
 import AuthShell from "../components/AuthShell";
+import TelefonosField from "../../usuarios/components/TelefonosField";
 import Input from "../../../components/ui/Input";
 import Select from "../../../components/ui/Select";
 import Button from "../../../components/ui/Button";
@@ -19,8 +20,7 @@ const PASOS = [
 ];
 
 /**
- * Registro en 2 pasos (el RegisterRequest tiene 12+ campos; partirlo
- * reduce el abandono y agrupa por significado: identidad vs. contacto).
+ * Registro en 2 pasos
  */
 export default function RegisterPage() {
   useDocumentTitle("Crear cuenta");
@@ -30,7 +30,6 @@ export default function RegisterPage() {
   const [paso, setPaso] = useState(1);
   const [loading, setLoading] = useState(false);
   const [errores, setErrores] = useState({});
-  const [telefono, setTelefono] = useState("");
   const [form, setForm] = useState({
     email: "",
     nombre: "",
@@ -62,16 +61,18 @@ export default function RegisterPage() {
     return Object.keys(e).length === 0;
   };
 
-  const agregarTelefono = () => {
-    const t = telefono.trim();
-    if (!t) return;
-    if (form.telefonos.includes(t)) return setTelefono("");
-    setForm((f) => ({ ...f, telefonos: [...f.telefonos, t] }));
-    setTelefono("");
+  const validarPaso2 = () => {
+    const e = {};
+    if (!esRequerido(form.paisDireccion)) e.paisDireccion = "Indicá el país.";
+    if (!esRequerido(form.localidadDireccion)) e.localidadDireccion = "Indicá la localidad.";
+    if (!esRequerido(form.calleDireccion)) e.calleDireccion = "Indicá la calle.";
+    if (!esEnteroPositivo(form.numeroDireccion)) e.numeroDireccion = "Número de puerta inválido.";
+    if (!esEnteroPositivo(form.codigoPostalDireccion)) e.codigoPostalDireccion = "Código postal inválido.";
+    setErrores(e);
+    return Object.keys(e).length === 0;
   };
 
-  const quitarTelefono = (t) =>
-    setForm((f) => ({ ...f, telefonos: f.telefonos.filter((x) => x !== t) }));
+  const setTelefonos = (telefonos) => setForm((f) => ({ ...f, telefonos }));
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -79,6 +80,7 @@ export default function RegisterPage() {
       if (validarPaso1()) setPaso(2);
       return;
     }
+    if (!validarPaso2()) return;
     setLoading(true);
     try {
       await register({
@@ -88,11 +90,11 @@ export default function RegisterPage() {
         paisDocumento: form.paisDocumento.trim(),
         tipoDocumento: form.tipoDocumento,
         numeroDocumento: Number(form.numeroDocumento),
-        paisDireccion: form.paisDireccion.trim() || null,
-        localidadDireccion: form.localidadDireccion.trim() || null,
-        calleDireccion: form.calleDireccion.trim() || null,
-        numeroDireccion: form.numeroDireccion ? Number(form.numeroDireccion) : null,
-        codigoPostalDireccion: form.codigoPostalDireccion ? Number(form.codigoPostalDireccion) : null,
+        paisDireccion: form.paisDireccion.trim(),
+        localidadDireccion: form.localidadDireccion.trim(),
+        calleDireccion: form.calleDireccion.trim(),
+        numeroDireccion: Number(form.numeroDireccion),
+        codigoPostalDireccion: Number(form.codigoPostalDireccion),
         telefonos: form.telefonos,
       });
       toast.success("Cuenta creada. Ya podés iniciar sesión.");
@@ -172,40 +174,21 @@ export default function RegisterPage() {
               className="space-y-4"
             >
               <fieldset className="rounded-xl border border-container-high p-4">
-                <legend className="px-1 text-sm font-bold text-ink">Dirección (opcional)</legend>
+                <legend className="px-1 text-sm font-bold text-ink">Dirección</legend>
                 <div className="grid gap-4 sm:grid-cols-2">
-                  <Input label="País" value={form.paisDireccion} onChange={set("paisDireccion")} placeholder="Uruguay" />
-                  <Input label="Localidad" value={form.localidadDireccion} onChange={set("localidadDireccion")} placeholder="Montevideo" />
-                  <Input label="Calle" value={form.calleDireccion} onChange={set("calleDireccion")} placeholder="Av. 8 de Octubre" />
+                  <Input label="País" value={form.paisDireccion} onChange={set("paisDireccion")} placeholder="Uruguay" error={errores.paisDireccion} required />
+                  <Input label="Localidad" value={form.localidadDireccion} onChange={set("localidadDireccion")} placeholder="Montevideo" error={errores.localidadDireccion} required />
+                  <Input label="Calle" value={form.calleDireccion} onChange={set("calleDireccion")} placeholder="Av. 8 de Octubre" error={errores.calleDireccion} required />
                   <div className="grid grid-cols-2 gap-4">
-                    <Input label="Número" type="number" value={form.numeroDireccion} onChange={set("numeroDireccion")} placeholder="2738" />
-                    <Input label="C. Postal" type="number" value={form.codigoPostalDireccion} onChange={set("codigoPostalDireccion")} placeholder="11600" />
+                    <Input label="Número" type="number" value={form.numeroDireccion} onChange={set("numeroDireccion")} placeholder="2738" error={errores.numeroDireccion} required />
+                    <Input label="C. Postal" type="number" value={form.codigoPostalDireccion} onChange={set("codigoPostalDireccion")} placeholder="11600" error={errores.codigoPostalDireccion} required />
                   </div>
                 </div>
               </fieldset>
 
               <fieldset className="rounded-xl border border-container-high p-4">
                 <legend className="px-1 text-sm font-bold text-ink">Teléfonos de contacto</legend>
-                <div className="flex gap-2">
-                  <Input className="flex-1" placeholder="+598 99 123 456" value={telefono}
-                    onChange={(e) => setTelefono(e.target.value)}
-                    onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); agregarTelefono(); } }} />
-                  <Button type="button" variant="secondary" onClick={agregarTelefono} aria-label="Agregar teléfono">
-                    <LuPlus className="size-4" />
-                  </Button>
-                </div>
-                {form.telefonos.length > 0 && (
-                  <ul className="mt-3 flex flex-wrap gap-2">
-                    {form.telefonos.map((t) => (
-                      <li key={t} className="flex items-center gap-1.5 rounded-full bg-container px-3 py-1 text-sm font-semibold text-navy-900">
-                        {t}
-                        <button type="button" onClick={() => quitarTelefono(t)} aria-label={`Quitar ${t}`} className="text-ink-faint hover:text-danger-600">
-                          <LuX className="size-3.5" />
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                )}
+                <TelefonosField telefonos={form.telefonos} onChange={setTelefonos} label={null} />
               </fieldset>
 
               <div className="flex gap-3">

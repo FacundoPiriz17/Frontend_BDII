@@ -9,6 +9,7 @@ import Input from "../../../components/ui/Input";
 import Select from "../../../components/ui/Select";
 import ErrorMessage from "../../../components/feedback/ErrorMessage";
 import { usuarioService } from "../services/usuarioService";
+import { useAuth } from "../../auth/hooks/useAuth";
 import { useFetch } from "../../../hooks/useFetch";
 import { useDebounce } from "../../../hooks/useDebounce";
 import { ROLES } from "../../../lib/constants";
@@ -19,6 +20,7 @@ import { useDocumentTitle } from "../../../hooks/useDocumentTitle";
 
 export default function UsuariosAdminPage() {
   useDocumentTitle("Usuarios");
+  const { user } = useAuth();
   const [rol, setRol] = useState("");
   const [habilitado, setHabilitado] = useState("");
   const [busqueda, setBusqueda] = useState("");
@@ -70,19 +72,25 @@ export default function UsuariosAdminPage() {
     { key: "habilitado", header: "Estado", align: "center", render: (u) => (
       <Badge variant={u.habilitado ? "ok" : "danger"}>{u.habilitado ? "Habilitado" : "Deshabilitado"}</Badge>
     )},
-    { key: "acciones", header: "", align: "right", render: (u) => (
-      <div className="flex justify-end gap-1.5">
-        <Button size="sm" variant="ghost" onClick={() => setEditando(u)} aria-label={`Editar roles de ${u.nombre}`}>
-          <LuShieldCheck className="size-4" /> Roles
-        </Button>
-        <Button size="sm" variant={u.habilitado ? "ghost" : "outline"}
-          className={cn(u.habilitado && "text-danger-600")}
-          loading={toggling === u.email}
-          onClick={() => toggleHabilitacion(u)}>
-          {u.habilitado ? "Deshabilitar" : "Habilitar"}
-        </Button>
-      </div>
-    )},
+    { key: "acciones", header: "", align: "right", render: (u) => {
+      const esMiCuenta = u.email?.toLowerCase() === user?.email?.toLowerCase();
+      if (esMiCuenta) {
+        return <span className="text-xs font-semibold text-ink-faint">Tu cuenta</span>;
+      }
+      return (
+        <div className="flex justify-end gap-1.5">
+          <Button size="sm" variant="ghost" onClick={() => setEditando(u)} aria-label={`Editar roles de ${u.nombre}`}>
+            <LuShieldCheck className="size-4" /> Roles
+          </Button>
+          <Button size="sm" variant={u.habilitado ? "ghost" : "outline"}
+            className={cn(u.habilitado && "text-danger-600")}
+            loading={toggling === u.email}
+            onClick={() => toggleHabilitacion(u)}>
+            {u.habilitado ? "Deshabilitar" : "Habilitar"}
+          </Button>
+        </div>
+      );
+    }},
   ];
 
   return (

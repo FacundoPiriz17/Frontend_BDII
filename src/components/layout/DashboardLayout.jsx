@@ -42,7 +42,7 @@ export default function DashboardLayout() {
         { to: routePaths.adminEstadios, label: "Estadios", icon: LuLandPlot },
         { to: routePaths.adminUsuarios, label: "Usuarios", icon: LuUsers },
         { to: routePaths.adminDispositivos, label: "Dispositivos", icon: LuSmartphone },
-        { to: routePaths.adminValidaciones, label: "Auditoría", icon: LuShieldCheck },
+        { to: routePaths.adminAuditoria, label: "Auditoría", icon: LuShieldCheck },
       ],
     });
   }
