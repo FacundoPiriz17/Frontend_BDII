@@ -18,7 +18,7 @@ import { useAuth } from "../../auth/hooks/useAuth";
 import { formatFecha, formatHora, formatFechaHora } from "../../../lib/formatters";
 import { routePaths } from "../../../routes/routePaths";
 import { useDocumentTitle } from "../../../hooks/useDocumentTitle";
-import heroMundial from "../../../assets/brand/hero-mundial.svg";
+import trofeo26 from "../../../assets/brand/trofeo-26.jpg";
 
 /**
  * Inicio del usuario general. Admin y funcionario
@@ -49,25 +49,35 @@ export default function HomePage() {
       <motion.section
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="relative mb-8 overflow-hidden rounded-3xl bg-navy-950 px-6 py-8 text-white sm:px-10 sm:py-10"
+        className="relative mb-8 flex flex-col overflow-hidden rounded-3xl bg-navy-950 text-white sm:flex-row sm:items-stretch"
       >
         <div aria-hidden className="pointer-events-none absolute inset-0">
-          <img
-            src={heroMundial}
-            alt=""
-            className="absolute inset-y-0 right-0 h-full w-2/3 object-cover object-right opacity-30 [mask-image:linear-gradient(to_right,transparent,black_55%)]"
-          />
+          <div className="absolute inset-0 bg-[radial-gradient(120%_140%_at_85%_0%,#0b3c7e_0%,#002b61_38%,#00173a_78%)]" />
           <div className="absolute -right-16 -top-20 size-72 rounded-full bg-navy-800/40 blur-3xl" />
           <div className="absolute -bottom-24 left-1/4 size-72 rounded-full bg-energy-700/30 blur-3xl" />
         </div>
-        <div className="relative flex flex-wrap items-end justify-between gap-4">
-          <div>
-            <p className="text-sm font-semibold uppercase tracking-widest text-energy-400">Bienvenido{nombre ? `, ${nombre}` : ""}</p>
-            <h1 className="mt-1 text-3xl font-extrabold display-tight sm:text-4xl">Tu Mundial 2026 empieza acá</h1>
-            <p className="mt-2 max-w-lg text-sm text-navy-100">Gestioná tus entradas, compras y transferencias desde un solo lugar.</p>
-          </div>
-          <Link to={routePaths.partidos}>
-            <Button variant="energy" size="lg">Ver partidos <LuArrowRight className="size-4" /></Button>
+
+        {/* Texto */}
+        <div className="relative z-10 flex-1 px-6 pt-8 pb-4 sm:py-10 sm:pl-10 sm:pr-4">
+          <p className="text-sm font-semibold uppercase tracking-widest text-energy-400">
+            Bienvenido{nombre ? `, ${nombre}` : ""}
+          </p>
+          <h1 className="mt-1 text-3xl font-extrabold display-tight sm:text-4xl">Tu Mundial 2026 empieza acá</h1>
+          <p className="mt-2 max-w-lg text-sm text-navy-100">
+            Gestioná tus entradas, compras y transferencias desde un solo lugar.
+          </p>
+        </div>
+
+        {/* Trofeo 26 (solo desktop) */}
+        <div className="relative z-10 hidden w-44 shrink-0 items-center justify-center self-stretch overflow-hidden bg-black sm:flex">
+          <img src={trofeo26} alt="" aria-hidden className="h-[88%] w-auto object-contain" />
+        </div>
+
+        <div className="relative z-10 flex shrink-0 items-center px-6 pb-8 sm:py-10 sm:px-8">
+          <Link to={routePaths.partidos} className="max-sm:w-full">
+            <Button variant="energy" size="lg" className="max-sm:w-full">
+              Ver partidos <LuArrowRight className="size-4" />
+            </Button>
           </Link>
         </div>
       </motion.section>

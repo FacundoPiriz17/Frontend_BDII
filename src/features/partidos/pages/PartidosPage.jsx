@@ -14,6 +14,7 @@ import { useFetch } from "../../../hooks/useFetch";
 import { useDebounce } from "../../../hooks/useDebounce";
 import { FASES, PAISES_SEDE, ESTADOS_PARTIDO } from "../../../lib/constants";
 import { useDocumentTitle } from "../../../hooks/useDocumentTitle";
+import mascotas from "../../../assets/brand/mascotas.png";
 
 /**
  * Cartelera de partidos comprables. Usa /api/compras/partidos-disponibles
@@ -66,14 +67,24 @@ export default function PartidosPage() {
         className="relative mb-8 overflow-hidden rounded-3xl bg-navy-950 px-6 py-10 text-white sm:px-10"
       >
         <div aria-hidden className="pointer-events-none absolute inset-0">
+          <div className="absolute inset-0 bg-[radial-gradient(130%_150%_at_18%_10%,#0b3c7e_0%,#002b61_40%,#00173a_80%)]" />
           <div className="absolute -right-20 -top-24 size-80 rounded-full bg-navy-800/70 blur-3xl" />
           <div className="absolute -bottom-28 left-1/3 size-80 rounded-full bg-energy-700/40 blur-3xl" />
         </div>
-        <div className="relative">
+
+        {/* Mascotas: ancladas abajo-derecha */}
+        <img
+          src={mascotas}
+          alt=""
+          aria-hidden
+          className="pointer-events-none absolute right-4 top-[8%] hidden h-[131%] w-auto select-none lg:block"
+        />
+
+        <div className="relative z-10 max-w-2xl lg:max-w-[60%]">
           <p className="mb-2 inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-[11px] font-bold uppercase tracking-widest text-energy-400">
             <LuTicket className="size-3.5" aria-hidden /> FIFA World Cup 2026
           </p>
-          <h1 className="max-w-2xl text-3xl font-extrabold leading-tight display-tight sm:text-4xl">
+          <h1 className="text-3xl font-extrabold leading-tight display-tight sm:text-4xl">
             Tu lugar en <span className="text-energy-500">la historia</span> del fútbol
           </h1>
           <p className="mt-2 max-w-xl text-sm text-navy-100 sm:text-base">

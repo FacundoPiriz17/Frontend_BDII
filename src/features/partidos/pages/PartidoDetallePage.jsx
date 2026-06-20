@@ -67,7 +67,7 @@ export default function PartidoDetallePage() {
               )}
             </div>
             <div className="rounded-2xl bg-white/5 p-4 text-right backdrop-blur-sm">
-              <TeamBadge nombre={partido.equipoVisitante} equipo={buscarEquipo(partido.equipoVisitante)} size="lg" reverse className="justify-end text-white [&_span]:text-white" />
+              <TeamBadge nombre={partido.equipoVisitante} equipo={buscarEquipo(partido.equipoVisitante)} size="lg" reverse className="w-full text-white [&_span]:text-white" />
               <p className="mt-1 text-xs uppercase tracking-widest text-navy-300">Visitante</p>
             </div>
           </div>
