@@ -5,6 +5,7 @@ import ProtectedRoute from "../routes/ProtectedRoute";
 import RoleRoute from "../routes/RoleRoute";
 import AppLayout from "../components/layout/AppLayout";
 import DashboardLayout from "../components/layout/DashboardLayout";
+import PerfilLayout from "../components/layout/PerfilLayout";
 import { LoadingBlock } from "../components/ui/Spinner";
 import { ROLES } from "../lib/constants";
 
@@ -35,6 +36,7 @@ const ValidacionesPage = lazy(() => import("../features/validaciones/pages/Valid
 
 // Admin
 const AdminDashboardPage = lazy(() => import("../features/dashboard/pages/AdminDashboardPage"));
+const AuditoriaPage = lazy(() => import("../features/dashboard/pages/AuditoriaPage"));
 const PartidoFormPage = lazy(() => import("../features/partidos/pages/PartidoFormPage"));
 const AdminEventosPage = lazy(() => import("../features/partidos/pages/AdminEventosPage"));
 const EstadiosPage = lazy(() => import("../features/estadios/pages/EstadiosPage"));
@@ -68,7 +70,6 @@ export default function AppRouter() {
             <Route path={routePaths.partidoDetalle()} element={<PartidoDetallePage />} />
             <Route path={routePaths.equipos} element={<EquiposPage />} />
             <Route path={routePaths.equipoDetalle()} element={<EquipoDetallePage />} />
-            <Route path={routePaths.perfil} element={<PerfilPage />} />
 
             {/* Exclusivo del usuario general*/}
             <Route element={<RoleRoute roles={[ROLES.GENERAL]} />}>
@@ -79,6 +80,11 @@ export default function AppRouter() {
               <Route path={routePaths.transferencias} element={<MisTransferenciasPage />} />
               <Route path={routePaths.transferenciaNueva} element={<CrearTransferenciaPage />} />
             </Route>
+          </Route>
+
+          {/* Perfil: chrome según rol (navbar general o panel admin/funcionario) */}
+          <Route element={<PerfilLayout />}>
+            <Route path={routePaths.perfil} element={<PerfilPage />} />
           </Route>
 
           {/* Panel: sidebar (admin y funcionario) */}
@@ -105,6 +111,7 @@ export default function AppRouter() {
               <Route path={routePaths.adminEstadioEditar()} element={<EstadioFormPage />} />
               <Route path={routePaths.adminUsuarios} element={<UsuariosAdminPage />} />
               <Route path={routePaths.adminDispositivos} element={<DispositivosPage />} />
+              <Route path={routePaths.adminAuditoria} element={<AuditoriaPage />} />
             </Route>
           </Route>
         </Route>

@@ -5,7 +5,7 @@ import PageHeader from "../../../components/layout/PageHeader";
 import { LoadingBlock } from "../../../components/ui/Spinner";
 import ErrorMessage from "../../../components/feedback/ErrorMessage";
 import EmptyState from "../../../components/ui/EmptyState";
-import Input from "../../../components/ui/Input";
+import Select from "../../../components/ui/Select";
 import Flag from "../../../components/ui/Flag";
 import AnimatedList from "../components/AnimatedList";
 import { equipoService } from "../services/equipoService";
@@ -50,33 +50,27 @@ export default function EquiposPage() {
       />
 
       <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center">
-        <div className="sm:max-w-xs sm:flex-1">
-          <Input
-            icon={LuSearch}
+        <div className="relative flex-1">
+          <LuSearch className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-ink-faint" aria-hidden />
+          <input
+            type="search"
             placeholder="Buscar país o código FIFA…"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             aria-label="Buscar equipo"
+            className="h-11 w-full rounded-xl border border-line bg-white pl-9 pr-3 text-sm text-ink placeholder:text-ink-faint transition-colors focus:border-navy-700 focus:outline-none focus:ring-2 focus:ring-navy-700/20"
           />
         </div>
-        <div className="flex flex-wrap gap-1.5" role="tablist" aria-label="Filtrar por grupo">
-          {grupos.map((g) => (
-            <button
-              key={g}
-              role="tab"
-              aria-selected={grupo === g}
-              onClick={() => setGrupo(g)}
-              className={cn(
-                "rounded-full px-3 py-1.5 text-xs font-bold transition-colors",
-                grupo === g
-                  ? "bg-navy-900 text-white"
-                  : "bg-container text-ink-soft hover:bg-container-high"
-              )}
-            >
-              {g === "todos" ? "Todos" : `Grupo ${g}`}
-            </button>
-          ))}
-        </div>
+        <Select
+          aria-label="Filtrar por grupo"
+          placeholder="Todos los grupos"
+          className="sm:w-52"
+          value={grupo === "todos" ? "" : grupo}
+          onChange={(e) => setGrupo(e.target.value || "todos")}
+          options={grupos
+            .filter((g) => g !== "todos")
+            .map((g) => ({ value: g, label: `Grupo ${g}` }))}
+        />
       </div>
 
       {equipos.length === 0 ? (
@@ -89,6 +83,7 @@ export default function EquiposPage() {
         <AnimatedList
           items={equipos}
           onItemSelect={irADetalle}
+          showGradients={false}
           className="mx-auto max-w-2xl"
           renderItem={(equipo, { selected }) => (
             <div

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import {
-  LuTicket, LuMenu, LuX, LuLogOut, LuUser, LuChevronDown,
+  LuMenu, LuX, LuLogOut, LuUser, LuChevronDown,
   LuCalendarDays, LuArrowLeftRight, LuShoppingBag, LuHouse, LuUsers,
 } from "react-icons/lu";
 import { useAuth } from "../../features/auth/hooks/useAuth";
@@ -10,6 +10,7 @@ import { routePaths } from "../../routes/routePaths";
 import { cn } from "../../lib/cn";
 import Badge from "../ui/Badge";
 import NotificationBell from "../../features/notificaciones/components/NotificationBell";
+import UcuLogoIcon from "../ui/UcuLogoIcon";
 
 const linksComunes = [
   { to: routePaths.home, label: "Inicio", icon: LuHouse, end: true },
@@ -18,7 +19,7 @@ const linksComunes = [
 ];
 
 const linksGenerales = [
-  { to: routePaths.misEntradas, label: "Mis entradas", icon: LuTicket },
+  { to: routePaths.misEntradas, label: "Mis entradas", icon: UcuLogoIcon },
   { to: routePaths.misCompras, label: "Mis compras", icon: LuShoppingBag },
   { to: routePaths.transferencias, label: "Transferencias", icon: LuArrowLeftRight },
 ];
@@ -41,9 +42,10 @@ export default function Navbar() {
     <header className="sticky top-0 z-40 bg-navy-950 text-white shadow-md">
       <div className="mx-auto flex h-16 max-w-7xl items-center gap-4 px-4 sm:px-6">
         <Link to={routePaths.home} className="flex items-center gap-2.5">
-          <span className="flex size-9 items-center justify-center rounded-lg bg-energy-500 text-navy-950">
-            <LuTicket className="size-5" aria-hidden />
-          </span>
+          <UcuLogoIcon
+            className="size-9 rounded-lg bg-white/10 p-1.5 ring-1 ring-white/15"
+            aria-hidden
+          />
           <span className="leading-tight">
             <span className="block text-base font-extrabold display-tight">UCU Mundial</span>
             <span className="block text-[10px] font-semibold uppercase tracking-widest text-navy-300">

@@ -14,6 +14,7 @@ import { routePaths } from "../../../routes/routePaths";
  */
 
 export default function PartidoCard({ partido, buscarEquipo, comprable = true }) {
+  const jugado = partido.estado && partido.estado !== "no empezado";
   const sectores = partido.sectores ?? [];
   const conStock = sectores.filter((s) => (s.entradasDisponibles ?? 1) > 0);
   const desde = sectores.length
@@ -52,12 +53,19 @@ export default function PartidoCard({ partido, buscarEquipo, comprable = true })
             <TeamBadge nombre={partido.equipoLocal} equipo={buscarEquipo?.(partido.equipoLocal)} />
             <TeamBadge nombre={partido.equipoVisitante} equipo={buscarEquipo?.(partido.equipoVisitante)} />
           </div>
-          {desde !== undefined && desde !== null && (
+          {jugado ? (
+            <div className="shrink-0 text-right">
+              <p className="text-[11px] font-semibold uppercase tracking-wide text-ink-faint">Resultado</p>
+              <p className="text-2xl font-extrabold tabular-nums text-navy-900 display-tight">
+                {partido.marcadorLocal ?? 0}<span className="mx-1 text-ink-faint">-</span>{partido.marcadorVisitante ?? 0}
+              </p>
+            </div>
+          ) : desde !== undefined && desde !== null ? (
             <div className="shrink-0 text-right">
               <p className="text-[11px] font-semibold uppercase tracking-wide text-ink-faint">Desde</p>
               <p className="text-xl font-extrabold text-navy-900 display-tight">{formatMoney(desde)}</p>
             </div>
-          )}
+          ) : null}
         </div>
 
         <div className="mt-auto flex flex-wrap gap-x-4 gap-y-1.5 border-t border-container-low pt-3 text-xs font-medium text-ink-soft">

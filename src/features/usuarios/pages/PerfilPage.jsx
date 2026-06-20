@@ -9,6 +9,9 @@ import Badge from "../../../components/ui/Badge";
 import { LoadingBlock } from "../../../components/ui/Spinner";
 import ErrorMessage from "../../../components/feedback/ErrorMessage";
 import { authService } from "../../auth/services/authService";
+import SesionCard from "../../auth/components/SesionCard";
+import CambiarContrasenaCard from "../components/CambiarContrasenaCard";
+import TelefonosField from "../components/TelefonosField";
 import { usuarioService } from "../services/usuarioService";
 import { useFetch } from "../../../hooks/useFetch";
 import { useAuth } from "../../auth/hooks/useAuth";
@@ -22,7 +25,6 @@ export default function PerfilPage() {
   const { data: perfil, loading, error, refetch } = useFetch(useCallback(() => authService.me(), []));
 
   const [form, setForm] = useState(null);
-  const [telefono, setTelefono] = useState("");
   const [guardando, setGuardando] = useState(false);
   const [errores, setErrores] = useState({});
 
@@ -44,13 +46,7 @@ export default function PerfilPage() {
   if (!form) return null;
 
   const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
-  const agregarTel = () => {
-    const t = telefono.trim();
-    if (!t || form.telefonos.includes(t)) return setTelefono("");
-    setForm((f) => ({ ...f, telefonos: [...f.telefonos, t] }));
-    setTelefono("");
-  };
-  const quitarTel = (t) => setForm((f) => ({ ...f, telefonos: f.telefonos.filter((x) => x !== t) }));
+  const setTelefonos = (telefonos) => setForm((f) => ({ ...f, telefonos }));
 
   const guardar = async (e) => {
     e.preventDefault();
@@ -84,8 +80,9 @@ export default function PerfilPage() {
     <>
       <PageHeader title="Mi perfil" subtitle="Tus datos personales y de contacto." />
 
-      <div className="grid gap-6 lg:grid-cols-[5fr_7fr]">
-        {/* Identidad*/}
+      <div className="grid items-start gap-6 lg:grid-cols-[5fr_7fr]">
+
+        <div className="space-y-6">
         <Card>
           <CardBody className="space-y-4">
             <div className="flex items-center gap-3">
@@ -109,14 +106,24 @@ export default function PerfilPage() {
                 <dt className="text-ink-faint">País emisor</dt>
                 <dd className="font-semibold text-ink">{perfil.paisDocumento}</dd>
               </div>
+              <div className="flex justify-between gap-2">
+                <dt className="text-ink-faint">Teléfonos</dt>
+                <dd className="text-right font-semibold text-ink">
+                  {perfil.telefonos?.length
+                    ? perfil.telefonos.join(" · ")
+                    : <span className="font-normal text-ink-faint">Sin teléfonos</span>}
+                </dd>
+              </div>
             </dl>
             <p className="flex items-center gap-1.5 rounded-xl bg-container-low p-3 text-xs text-ink-soft">
               <LuShieldCheck className="size-4 text-navy-700" /> El documento no se puede modificar desde el perfil.
             </p>
           </CardBody>
         </Card>
+        <SesionCard />
+        </div>
 
-        {/* Editable */}
+        <div className="space-y-6">
         <Card>
           <CardHeader title="Editar datos" icon={LuUserRound} />
           <CardBody>
@@ -138,30 +145,16 @@ export default function PerfilPage() {
 
               <fieldset className="rounded-xl border border-container-high p-4">
                 <legend className="px-1 text-sm font-bold text-ink">Teléfonos</legend>
-                <div className="flex gap-2">
-                  <Input className="flex-1" placeholder="+598 99 123 456" value={telefono}
-                    onChange={(e) => setTelefono(e.target.value)}
-                    onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); agregarTel(); } }} />
-                  <Button type="button" variant="secondary" onClick={agregarTel} aria-label="Agregar teléfono"><LuPlus className="size-4" /></Button>
-                </div>
-                {form.telefonos.length > 0 && (
-                  <ul className="mt-3 flex flex-wrap gap-2">
-                    {form.telefonos.map((t) => (
-                      <li key={t} className="flex items-center gap-1.5 rounded-full bg-container px-3 py-1 text-sm font-semibold text-navy-900">
-                        {t}
-                        <button type="button" onClick={() => quitarTel(t)} aria-label={`Quitar ${t}`} className="text-ink-faint hover:text-danger-600">
-                          <LuX className="size-3.5" />
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                )}
+                <TelefonosField telefonos={form.telefonos} onChange={setTelefonos} label={null} />
               </fieldset>
 
               <Button type="submit" loading={guardando}>Guardar cambios</Button>
             </form>
           </CardBody>
         </Card>
+
+        <CambiarContrasenaCard />
+        </div>
       </div>
     </>
   );

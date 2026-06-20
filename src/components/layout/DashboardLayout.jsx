@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import {
-  LuTicket, LuLayoutDashboard, LuCalendarDays, LuLandPlot, LuUsers,
+  LuLayoutDashboard, LuCalendarDays, LuLandPlot, LuUsers,
   LuScanLine, LuHistory, LuLogOut, LuMenu, LuX, LuSmartphone, LuUser,
   LuShieldCheck, LuChevronDown,
 } from "react-icons/lu";
@@ -11,6 +11,7 @@ import { useAuth } from "../../features/auth/hooks/useAuth";
 import { routePaths } from "../../routes/routePaths";
 import Badge from "../ui/Badge";
 import { cn } from "../../lib/cn";
+import UcuLogoIcon from "../ui/UcuLogoIcon";
 
 /* Layout de panel para Admin y Funcionario.*/
 export default function DashboardLayout() {
@@ -42,7 +43,7 @@ export default function DashboardLayout() {
         { to: routePaths.adminEstadios, label: "Estadios", icon: LuLandPlot },
         { to: routePaths.adminUsuarios, label: "Usuarios", icon: LuUsers },
         { to: routePaths.adminDispositivos, label: "Dispositivos", icon: LuSmartphone },
-        { to: routePaths.adminValidaciones, label: "Auditoría", icon: LuShieldCheck },
+        { to: routePaths.adminAuditoria, label: "Auditoría", icon: LuShieldCheck },
       ],
     });
   }
@@ -60,9 +61,10 @@ export default function DashboardLayout() {
 
   const logo = (collapsible) => (
     <Link to={routePaths.home} className="flex h-16 items-center gap-3 px-5">
-      <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-energy-500 text-navy-950">
-        <LuTicket className="size-5" aria-hidden />
-      </span>
+      <UcuLogoIcon
+        className="size-9 rounded-lg bg-white/10 p-1.5 ring-1 ring-white/15"
+        aria-hidden
+      />
       <span
         className={cn(
           "leading-tight transition-opacity duration-200",

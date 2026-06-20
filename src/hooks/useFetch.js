@@ -1,37 +1,36 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 /**
  * Hook mínimo para data-fetching declarativo.
- * - `fetcher` debe estar memorizado (useCallback) o ser estable.
- * - Expone { data, loading, error, refetch }.
+ * - `fetcher` DEBE estar memorizado con useCallback; sus dependencias (p. ej.
+ *   filtros) definen cuándo se vuelve a pedir.
  */
-export function useFetch(fetcher, deps = []) {
+export function useFetch(fetcher) {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const aliveRef = useRef(true);
+  const [version, setVersion] = useState(0);
 
-  const load = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const result = await fetcher();
-      if (aliveRef.current) setData(result);
-    } catch (err) {
-      if (aliveRef.current) setError(err);
-    } finally {
-      if (aliveRef.current) setLoading(false);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, deps);
+  const refetch = useCallback(() => setVersion((v) => v + 1), []);
 
   useEffect(() => {
-    aliveRef.current = true;
-    load();
+    let active = true;
+    setLoading(true);
+    setError(null);
+    fetcher()
+      .then((result) => {
+        if (active) setData(result);
+      })
+      .catch((err) => {
+        if (active) setError(err);
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
     return () => {
-      aliveRef.current = false;
+      active = false;
     };
-  }, [load]);
+  }, [fetcher, version]);
 
-  return { data, loading, error, refetch: load };
+  return { data, loading, error, refetch };
 }

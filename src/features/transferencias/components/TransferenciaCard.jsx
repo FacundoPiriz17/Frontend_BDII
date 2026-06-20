@@ -1,7 +1,9 @@
-import { LuArrowRight, LuArrowLeftRight } from "react-icons/lu";
+import { Link } from "react-router-dom";
+import { LuArrowRight, LuArrowLeftRight, LuQrCode } from "react-icons/lu";
 import Badge from "../../../components/ui/Badge";
 import Button from "../../../components/ui/Button";
 import { formatFechaHora, formatPartido } from "../../../lib/formatters";
+import { routePaths } from "../../../routes/routePaths";
 import { cn } from "../../../lib/cn";
 
 /**
@@ -56,6 +58,17 @@ export default function TransferenciaCard({ transferencia: t, relacion, onAccion
           ) : (
             <Button size="sm" variant="outline" loading={procesando} onClick={() => onAccion("cancelar", t)}>Cancelar envío</Button>
           )}
+        </div>
+      )}
+
+      {/* Tras aceptar una transferencia recibida, acceso directo a la entrada/QR */}
+      {esDestino && t.estado === "aceptada" && t.entrada && (
+        <div className="mt-3 border-t border-container-low pt-3">
+          <Link to={routePaths.entradaDetalle(t.entrada.idEntrada)}>
+            <Button size="sm" variant="energy" className="w-full">
+              <LuQrCode className="size-4" aria-hidden /> Ver entrada / QR
+            </Button>
+          </Link>
         </div>
       )}
     </article>

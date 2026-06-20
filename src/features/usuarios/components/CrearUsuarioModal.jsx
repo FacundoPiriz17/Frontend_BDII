@@ -22,8 +22,8 @@ export default function CrearUsuarioModal({ onClose, onSaved }) {
   const [guardando, setGuardando] = useState(false);
 
   const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
-  const toggleRol = (r) =>
-    setForm((f) => ({ ...f, roles: f.roles.includes(r) ? f.roles.filter((x) => x !== r) : [...f.roles, r] }));
+  // Un usuario se crea con un único rol.
+  const elegirRol = (r) => setForm((f) => ({ ...f, roles: [r] }));
 
   const validar = () => {
     const e = {};
@@ -32,6 +32,8 @@ export default function CrearUsuarioModal({ onClose, onSaved }) {
     if (!minLargo(form.password, 8)) e.password = "Mínimo 8 caracteres.";
     if (!form.paisDocumento.trim()) e.paisDocumento = "Requerido.";
     if (!esEnteroPositivo(form.numeroDocumento)) e.numeroDocumento = "Número inválido.";
+    else if (form.numeroDocumento.length > 10 || Number(form.numeroDocumento) > 2147483647)
+      e.numeroDocumento = "El documento supera el máximo permitido (10 dígitos).";
     setErrores(e);
     return Object.keys(e).length === 0;
   };
@@ -82,15 +84,15 @@ export default function CrearUsuarioModal({ onClose, onSaved }) {
         <Input label="Contraseña" type="password" value={form.password} onChange={set("password")} error={errores.password} />
         <Input label="País del documento" value={form.paisDocumento} onChange={set("paisDocumento")} error={errores.paisDocumento} placeholder="Uruguay" />
         <Select label="Tipo de documento" options={TIPOS_DOCUMENTO} value={form.tipoDocumento} onChange={set("tipoDocumento")} />
-        <Input label="Número de documento" type="number" value={form.numeroDocumento} onChange={set("numeroDocumento")} error={errores.numeroDocumento} />
+        <Input label="Número de documento" type="number" maxLength={10} value={form.numeroDocumento} onChange={set("numeroDocumento")} error={errores.numeroDocumento} hint="Máximo 10 dígitos." />
       </div>
 
-      <p className="mb-2 mt-5 text-sm font-bold text-ink">Roles</p>
-      <div className="flex flex-wrap gap-2">
+      <p className="mb-2 mt-5 text-sm font-bold text-ink">Rol <span className="font-normal text-ink-faint">(solo uno)</span></p>
+      <div className="flex flex-wrap gap-2" role="radiogroup" aria-label="Rol del usuario">
         {TODOS.map((r) => {
-          const activo = form.roles.includes(r);
+          const activo = form.roles[0] === r;
           return (
-            <button key={r} type="button" onClick={() => toggleRol(r)} aria-pressed={activo}
+            <button key={r} type="button" role="radio" aria-checked={activo} onClick={() => elegirRol(r)}
               className={cn(
                 "rounded-lg border-2 px-4 py-2 text-sm font-bold transition-colors",
                 activo ? "border-navy-900 bg-navy-900 text-white" : "border-line text-ink-soft hover:border-navy-700"
